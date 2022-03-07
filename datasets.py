@@ -29,6 +29,26 @@ def download_and_extract(url):
     return fn, fpath
 
 
+class AudioFolder(torch.utils.data.Dataset):
+    def __init__(self, root):
+        self.root = root
+        self.classes = sorted(os.listdir(root))
+        self.class_to_idx = {k: v for v, k in enumerate(self.classes)}
+        self.list_elems = []
+        for cls in self.classes:
+            self.list_elems += [os.path.join(cls, elem)
+                                for elem in os.listdir(os.path.join(self.root, cls))]
+
+    def __getitem__(self, idx):
+        wav_path = self.list_elems[idx]
+        label_ = wav_path.split("/")
+        rate, data = wavfile.read(os.path.join(self.root, wav_path))
+        return torch.from_numpy(data/4000).reshape((1, -1)).float(), rate, self.class_to_idx[label_]
+
+    def __len__(self):
+        return len(self.list_elems)
+
+
 def spokendigits_dataloader(args):
     fn, fpath = download_and_extract(EXTRA_INFO_SPOKENDIGITS["url"])
 

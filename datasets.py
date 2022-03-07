@@ -25,7 +25,7 @@ def download_and_extract(url):
     if os.path.exists(fpath):
         print("file verified!")
     else:
-        os.system(f"tar xzf {fn}")
+        os.system(f"tar xzf {fn} --directory={ROOT_DIR}")
     return fn, fpath
 
 

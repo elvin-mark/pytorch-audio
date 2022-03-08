@@ -4,7 +4,7 @@ import torch.nn as nn
 from cli_parser import create_test_parser
 from models import create_model
 from datasets import create_dataloader
-from utils import evaluate, WebLogger, test_audio
+from utils import evaluate, WebLogger, test_audio, draw_graph, get_model_graph
 import os
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -58,3 +58,12 @@ if args.samples:
         model, test_ds, raw_test_ds, extra_info["labels"], dev)
     if web_logger is not None:
         web_logger.send_samples(results)
+
+if web_logger is not None:
+    try:
+        model_graph = draw_graph(*get_model_graph(
+            model, torch.zeros((1, 1, args.audio_length)), dev))
+        results = {"graph": model_graph}
+        web_logger.send_model(results)
+    except:
+        print("Could not generate the model graph!")

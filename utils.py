@@ -12,6 +12,7 @@ import base64
 import tqdm
 import matplotlib.pyplot as plt
 import networkx as nx
+from scipy.io import wavfile
 
 
 class WebLogger:
@@ -27,12 +28,34 @@ class WebLogger:
     def send_samples(self, data):
         requests.post(self.base_url + "send_samples", json=data)
 
-    def send_landscape(self, data):
-        requests.post(self.base_url + "send_landscape", json=data)
+    def send_model(self, data):
+        requests.post(self.base_url + "send_model", json=data)
 
 
-def test_audio(model, test_ds, raw_test_ds, labels, dev):
-    pass
+def test_audio(model, test_dl, labels, rate, dev, N=5, top=5):
+    model.eval()
+    softmax = nn.Softmax(dim=1)
+    samples = []
+    x_, y_ = next(iter(test_dl))
+    x_ = x_[:N]
+    y_ = y_[:N]
+    for x, y in zip(x_, y_):
+        buf = io.BytesIO()
+        x_raw = x.cpu().numpy()
+        x_raw = (x_raw * 32768).astype(np.int16)
+        wavfile.write(buf, rate, x_raw[0])
+        buf.seek(0)
+        audio_bytes = buf.read()
+        audio_src = "data:audio/wav;base64," + \
+            base64.b64encode(audio_bytes).decode()
+        x_ = x.view(1, *x.shape).to(dev)
+        with torch.no_grad():
+            o = softmax(model(x_))
+        idxs = torch.argsort(o[0], descending=True).cpu()[:top]
+        prob = [{"class": labels[i], "prob":o[0][i].item() * 100}
+                for i in idxs]
+        samples.append({"audio_src": audio_src, "data": prob})
+    return {"samples": samples}
 
 
 def evaluate(model, test_dl, crit, dev):

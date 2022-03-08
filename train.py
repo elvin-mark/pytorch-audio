@@ -7,7 +7,7 @@ from models import create_model
 from datasets import create_dataloader
 from optim import create_optim
 from scheduler import create_lr_scheduler
-from utils import train, WebLogger, test_audio
+from utils import train, WebLogger, test_audio, get_model_graph, draw_graph
 
 
 import os
@@ -73,10 +73,19 @@ if args.save_model:
 if args.samples:
     print("Generating Sample Images Test")
     results = test_audio(
-        model, test_ds, raw_test_ds, extra_info["labels"], dev)
+        model, test_dl, extra_info["labels"], extra_info["new_freq"], dev)
     if web_logger is not None:
         web_logger.send_samples(results)
 
 if args.labels:
     with open("labels/dataset_labels.pkl", "wb") as f:
         pickle.dump(extra_info["labels"], f)
+
+if web_logger is not None:
+    try:
+        model_graph = draw_graph(*get_model_graph(
+            model, torch.zeros((1, 1, args.audio_length)), dev))
+        results = {"graph": model_graph}
+        web_logger.send_model(results)
+    except:
+        print("Could not generate the model graph!")

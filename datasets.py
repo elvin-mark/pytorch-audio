@@ -62,7 +62,7 @@ def spokendigits_dataloader(args):
             audio_fpath = os.path.join(self.root, audio_fn)
             rate, data = wavfile.read(audio_fpath)
             label, speaker, _ = audio_fn.split("_")
-            return torch.from_numpy(data/4000).reshape(1, -1).float(), rate, label
+            return torch.from_numpy(data/32768).reshape(1, -1).float(), rate, label
 
         def __len__(self):
             return len(self.list_elems)

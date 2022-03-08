@@ -107,7 +107,7 @@ def simple_general_resnet(args):
 def create_model(args):
     if args.model == "simple_general_cnn":
         return simple_general_cnn(args)
-    elif args.model == "simple_general_cnn":
+    elif args.model == "simple_general_resnet":
         return simple_general_resnet(args)
     else:
         return None

@@ -1,6 +1,6 @@
 # pytorch-audio
 
-Simple trainer cli for speech recognition models
+Simple trainer cli for speech recognition models.
 
 ## How to use
 
@@ -12,11 +12,10 @@ Run the server script in case you want to use the dashboard. This will create a 
 python server.py
 ```
 
-In the dashboard you can see the evolution of the training of your network model, predictions on some samples images, the loss landscape around the optimal parameters found in the training.
+In the dashboard you can see the evolution of the training of your network model, predictions on some samples audios and an sketch of your model!.
 ![dashboard](samples/dashboard.png?raw=true "Dashboard")
 ![samples](samples/samples.png?raw=true "Samples")
-![landscape](samples/loss_landscape.png?raw=true "Landscape")
-![contour](samples/contour.png?raw=true "Contour")
+![modelgraph](samples/modelgraph.png?raw=true "Model Graph")
 
 You can also use the following command line using ngrok if you want your dashboard to be available outside your local network. (If you want to use it from google colab for example)
 
@@ -59,7 +58,7 @@ python train.py \
 
 ### Audio Folder
 
-Using an audio folder containing all images in the following 2 formats. (Internally the [ImageFolder](https://pytorch.org/vision/main/generated/torchvision.datasets.ImageFolder.html) dataset from torchvision is used)
+Using an audio folder containing all **wav** files in the following 2 formats.
 
 - Using split-dataset flag:
 
@@ -68,9 +67,9 @@ Using an audio folder containing all images in the following 2 formats. (Interna
 ```
 root/
   class1/
-    images ...
+    audio1.wav ...
   class2/
-    images ...
+    audio1.wav ...
   ...
 ```
 
@@ -82,20 +81,20 @@ root/
 root/
   train/
     class1/
-      images ...
+      audio1.wav ...
     class2/
-      images ...
+      audio1.wav ...
   test/
     class1/
-      images ...
+      audio1.wav ...
     class2/
-      images ...
+      audio1.wav ...
 ```
 
 Example on how to train
 
 ```
-python train.py --dataset image_folder --root PATH_TO_ROOT --model simple_general_cnn --num-classes NUMBER_OF_CLASSES --save-model --epochs 10
+python train.py --dataset audio_folder --root PATH_TO_ROOT --model simple_general_cnn --num-classes NUMBER_OF_CLASSES --save-model --epochs 10 --audio-length 16000
 ```
 
 ### Customize models and dataloaders

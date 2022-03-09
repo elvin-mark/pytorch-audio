@@ -7,8 +7,8 @@ from models import create_model
 from datasets import create_dataloader
 from optim import create_optim
 from scheduler import create_lr_scheduler
-from utils import train, WebLogger, test_audio, get_model_graph, draw_graph
-
+from utils import train, WebLogger, test_audio, get_model_graph, draw_graph, \
+    get_graph_structure
 
 import os
 
@@ -83,9 +83,11 @@ if args.labels:
 
 if web_logger is not None:
     try:
-        model_graph = draw_graph(*get_model_graph(
-            model, torch.zeros((1, 1, args.audio_length)), dev))
-        results = {"graph": model_graph}
+        nodes_dict, layers_dict = get_model_graph(
+            model, torch.zeros((1, 1, args.audio_length)), dev)
+        graph_image = draw_graph(nodes_dict, layers_dict)
+        graph_struct = get_graph_structure(nodes_dict, layers_dict)
+        results = {"graph_img": graph_image, "graph_struct": graph_struct}
         web_logger.send_model(results)
     except:
         print("Could not generate the model graph!")

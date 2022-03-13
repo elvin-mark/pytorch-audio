@@ -54,9 +54,9 @@ if args.dashboard:
     web_logger.send_data(data)
 
 if args.samples:
-    print("Generating Sample Images Test")
+    print("Generating Sample Audio Test")
     results = test_audio(
-        model, test_ds, raw_test_ds, extra_info["labels"], dev)
+        model, test_dl, extra_info["labels"], extra_info["new_freq"], dev)
     if web_logger is not None:
         web_logger.send_samples(results)
 

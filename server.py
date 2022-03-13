@@ -1,5 +1,7 @@
+from email.policy import default
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, send, emit
+from argparse import ArgumentParser
 
 app = Flask(__name__)
 app.config["SECTRET_KEY"] = "dashboard_secret"
@@ -48,4 +50,9 @@ def handle_model():
 
 
 if __name__ == "__main__":
-    socketio.run(app)
+    parser = ArgumentParser(
+        description="cli for initialize the server for the dashboard")
+    parser.add_argument("--port", type=int, default=12345,
+                        help="port for the server")
+    args = parser.parse_args()
+    socketio.run(app, port=args.port)

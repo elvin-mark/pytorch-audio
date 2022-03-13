@@ -71,7 +71,7 @@ if args.save_model:
     torch.save(model.state_dict(), f"trained_models/{args.model}.ckpt")
 
 if args.samples:
-    print("Generating Sample Images Test")
+    print("Generating Sample Audio Test")
     results = test_audio(
         model, test_dl, extra_info["labels"], extra_info["new_freq"], dev)
     if web_logger is not None:
